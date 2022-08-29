@@ -32,15 +32,19 @@ app.get('/', (req, res) => {
 });
 
 app.head('/keepAlive', (req, res) => {
+    logger.debug('PING');
     res.send('pong');
+    logger.debug('PONG');
 });
 
 app.get('/channels', async (req, res) => {
+    logger.debug('Fetching all channels');
     const channels = await getChannels();
+    logger.debug('Done fetching channels');
 
     try {
-        res.send(channels);
         logger.info('Sending channel list');
+        res.send(channels);
     } catch (e) {
         logger.error(e);
     }
@@ -57,14 +61,16 @@ app.get('/messages', async (req: Message.Request, res: Message.Response) => {
         return;
     }
     try {
+        logger.debug('Fetching messages');
         const msg = await getMessages(channelId);
-        logger.debug('Sending channel messages');
+        logger.debug('Done fetching messages');
+        logger.info('Sending channel messages');
         res.send({
             message: `OK`,
             data: msg,
         });
     } catch (e) {
-        logger.error(e);
+        logger.error('Error fetching message');
         res.send({
             data: [],
             message: 'Error fetching messages',
@@ -75,8 +81,11 @@ app.get('/messages', async (req: Message.Request, res: Message.Response) => {
 app.get('/emoji', async (req: Emoji.Request, res: Emoji.Response) => {
     const emojiId = req.query.emojiId;
     try {
+        logger.debug('Fetching emoji');
         const emoji = await getEmoji(emojiId);
+        logger.debug('Done fetching emoji');
         if (!emoji) throw Error;
+        logger.info('Sending emoji');
         res.send({ message: 'OK', data: emoji });
     } catch (e) {
         logger.error(e);
