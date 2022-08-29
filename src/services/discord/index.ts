@@ -11,3 +11,6 @@ export async function getChannels() {
 export async function getMessages(channelId: string) {
     return await service.getChannelMessage(channelId, APU_SHENANIGAN_GUILD_ID);
 }
+export async function getEmoji(emojiId: string) {
+    return await service.getEmoji(emojiId, APU_SHENANIGAN_GUILD_ID);
+}

@@ -1,8 +1,9 @@
+import * as discord from 'discord.js';
+
 export namespace Discord {
     type CleanedMessage = {
-        applicationId: string | null;
-        authorId: string;
-        channelId: string;
+        author: discord.User;
+        attachment: discord.Attachment[];
         content: string;
         createdTimestamp: number;
         editedTimestamp: number | null;

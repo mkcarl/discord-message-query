@@ -1,7 +1,7 @@
 import express from 'express';
-import { getChannels, getMessages } from '../discord';
+import { getChannels, getEmoji, getMessages } from '../discord';
 import winston from 'winston';
-import { Message } from '../../types/api/discord';
+import { Emoji, Message } from '../../types/api/discord';
 
 const PORT = 3000;
 const app = express();
@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
     );
 });
 
-app.get('/keepAlive', (req, res) => {
+app.head('/keepAlive', (req, res) => {
     res.send('pong');
 });
 
@@ -67,8 +67,20 @@ app.get('/messages', async (req: Message.Request, res: Message.Response) => {
         logger.error(e);
         res.send({
             data: [],
-            message: ''
+            message: 'Error fetching messages',
         });
+    }
+});
+
+app.get('/emoji', async (req: Emoji.Request, res: Emoji.Response) => {
+    const emojiId = req.query.emojiId;
+    try {
+        const emoji = await getEmoji(emojiId);
+        if (!emoji) throw Error;
+        res.send({ message: 'OK', data: emoji });
+    } catch (e) {
+        logger.error(e);
+        res.send({ data: undefined, message: 'Emoji not found' });
     }
 });
 

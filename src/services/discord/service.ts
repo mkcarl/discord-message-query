@@ -29,6 +29,13 @@ class DiscordService {
         return guild.channels.fetch();
     }
 
+    async getEmoji(id: string, guildId: string) {
+        const emojis = await (
+            await this.client.guilds.fetch(guildId)
+        ).emojis.fetch();
+        return emojis.toJSON().find((e) => e.id === id);
+    }
+
     async getChannelMessage(
         channelId: string,
         guildId: string
@@ -67,14 +74,13 @@ class DiscordService {
 
         for (const msg of allMsg) {
             final.push({
-                channelId: msg.channelId,
                 id: msg.id,
-                applicationId: msg.applicationId,
                 content: msg.content,
-                authorId: msg.author.id,
                 createdTimestamp: msg.createdTimestamp,
                 editedTimestamp: msg.editedTimestamp,
                 pinned: msg.pinned,
+                author: msg.author,
+                attachment: msg.attachments.toJSON(),
             });
         }
 
